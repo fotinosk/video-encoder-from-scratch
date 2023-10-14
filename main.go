@@ -40,8 +40,7 @@ func main() {
 	fmt.Printf("TD file: %d\n", utils.Size(time_compressed))
 	fmt.Printf("Compression ratio: %0.2f%% \n", float32(utils.Size(time_compressed))/float32(utils.FastSize(frames)))
 
-	// TODO: fix deflate
-	deflated := deflate.Deflate(time_compressed)
+	deflated := deflate.Deflate(yuv_frames)
 	fmt.Printf("Deflated file: %d\n", deflated.Len())
 
 	elapsed := time.Since(start)
