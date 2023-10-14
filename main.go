@@ -13,7 +13,6 @@ import (
 )
 
 func main() {
-	start := time.Now()
 	var width, height int
 	flag.IntVar(&width, "width", 384, "width of the video")
 	flag.IntVar(&height, "height", 216, "height of the video")
@@ -33,16 +32,19 @@ func main() {
 
 	yuv_frames := yuv.ConvertRGBtoYUV(frames, width, height)
 	fmt.Printf("YUV file: %d\n", utils.FastSize(yuv_frames))
-	fmt.Printf("Compression ratio: %0.2f%% \n", float32(utils.FastSize(yuv_frames))/float32(utils.FastSize(frames)))
+	fmt.Printf("Compression ratio: %0.2f%% \n", 100*float32(utils.FastSize(yuv_frames))/float32(utils.FastSize(frames)))
 
+	start := time.Now()
 	time_compressed := timedelta.TimeDelta(yuv_frames)
+	time_rle := time.Since(start)
 
 	fmt.Printf("TD file: %d\n", utils.Size(time_compressed))
-	fmt.Printf("Compression ratio: %0.2f%% \n", float32(utils.Size(time_compressed))/float32(utils.FastSize(frames)))
+	fmt.Printf("Compression ratio: %0.2f%% \n", 100*float32(utils.Size(time_compressed))/float32(utils.FastSize(frames)))
+	fmt.Printf("LRE Processing took %s\n", time_rle)
 
+	start_delfated := time.Now()
 	deflated := deflate.Deflate(yuv_frames)
-	fmt.Printf("Deflated file: %d\n", deflated.Len())
-
-	elapsed := time.Since(start)
-	fmt.Printf("Processing took %s", elapsed)
+	time_deflated := time.Since(start_delfated)
+	fmt.Printf("Deflate Processing took %s\n", time_deflated)
+	fmt.Printf("Deflated ratio: %0.2f%%\n", 100*float32(deflated.Len()) / float32(utils.FastSize(frames)))
 }
